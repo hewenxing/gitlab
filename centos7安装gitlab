@@ -1,0 +1,54 @@
+sudo yum install -y curl policycoreutils-python openssh-server
+sudo systemctl enable sshd
+sudo systemctl start sshd
+sudo firewall-cmd --permanent --add-service=http
+sudo yum install postfix
+sudo systemctl enable postfix
+sudo systemctl start postfix
+
+mv /etc/yum.repos.d /etc/yum.repos.d.backup
+mkdir /etc/yum.repos.d
+wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+
+yum clean all
+yum makecache
+
+vim /etc/yum.repos.d/gitlab-ce.repo
+[gitlab-ce]
+name=Gitlab CE Repository
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el$releasever/
+gpgcheck=0
+enabled=1
+
+sudo yum makecache
+yum install gitlab-ce
+
+查看gitlab版本
+head -1 /opt/gitlab/version-manifest.txt
+
+
+vim /etc/gitlab/gitlab.rb
+external_url 'http://192.168.9.100'
+
+gitlab-ctl reconfigure
+gitlab-ctl start
+
+登录的用户名：root
+
+
+
+
+
+
+
+
+
+gitLab常用命令
+gitlab-ctl start   	             # 启动所有 gitlab 组件；
+gitlab-ctl stop       	         # 停止所有 gitlab 组件；             
+gitlab-ctl restart     	         # 重启所有 gitlab 组件；
+gitlab-ctl status       	       # 查看服务状态；
+gitlab-ctl reconfigure       	   # 启动服务；
+vim /etc/gitlab/gitlab.rb      	 # 修改默认的配置文件；
+gitlab-rake gitlab:check SANITIZE=true --trace    	 # 检查gitlab；
+gitlab-ctl tail                   # 查看日志；
